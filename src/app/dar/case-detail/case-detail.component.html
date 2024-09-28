@@ -1,4 +1,5 @@
-<div class="container">
+<div class="container" *ngIf="caseDetail; else loading">
+  <!-- <pre>{{ caseDetail | json }}</pre>-->
     <h2>Case Details</h2>
     <table border="1" cellpadding="5" cellspacing="0">
       <thead>
@@ -7,7 +8,7 @@
           <th>Status</th>
           <th>Type</th>
           <th>Created By</th>
-          <th>Create Date</th>
+          <th>Created Date</th>
           <th>Modified Date</th>
           <th>Pending Review Date</th>
           <th>Note</th>
@@ -15,16 +16,18 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ caseDetail.caseId }}</td>
-          <td>{{ caseDetail.caseStatus }}</td>
-          <td>{{ caseDetail.caseType }}</td>
-          <td>{{ caseDetail.createdBy }}</td>
-          <td>{{ caseDetail.createdDate | date: 'short' }}</td>
-          <td>{{ caseDetail.modifiedDate | date: 'short' }}</td>
-          <td>{{ caseDetail.pendingReviewDate | date: 'short' }}</td>
-          <td>{{ caseDetail.note }}</td>
+          <td>{{ caseDetail.case.caseId }}</td>
+          <td>{{ caseDetail.case.caseStatus }}</td>
+          <td>{{ caseDetail.case.caseType }}</td>
+          <td>{{ caseDetail.case.createdBy }}</td>
+          <td>{{ caseDetail.case.createDate | date: 'short' }}</td>
+          <td>{{ caseDetail.case.modifiedDate | date: 'short' }}</td>
+          <td>{{ caseDetail.case.pendingReviewDate | date: 'short' }}</td>
+          <td>{{ caseDetail.case.note }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-  
+<ng-template #loading>
+  <p>Loading case details...</p>
+</ng-template>
