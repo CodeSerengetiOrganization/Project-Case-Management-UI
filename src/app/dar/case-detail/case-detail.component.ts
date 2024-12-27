@@ -34,7 +34,22 @@ export class CaseDetailComponent implements OnInit {
         this.caseDetail = data;
       },
       (error: any) => {
-        console.error('Error retrieving case detail', error);
+        // Check if the error is an HTTP error
+        if(error.status === 400){  //handle 400 Bad Request
+          console.error('Bad Request: Invalid input or parameters',error);
+          alert('Invalid case ID or request parameters. Please check your input.');
+        }
+        if(error.status == 500){  // handle 500 Internal Error
+          console.error('Internal Server Error: something wrong with the server',error);
+          alert('There was a problem with the server. Please try again later.');
+        }if(error.status == 404){ // handle 404 Not Found error
+          console.error('Not Found: The requested case does not exist, case id:'+caseId,error);
+          alert('The case you are looking for does not exist. Please verify the case ID.');
+        }
+        else{ // Handle other errors 
+          console.error('An unexpected error occured.',error)
+        }
+        // console.error('Error retrieving case detail', error);
       }
     );
   }
