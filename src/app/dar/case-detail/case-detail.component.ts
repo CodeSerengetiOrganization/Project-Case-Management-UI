@@ -8,7 +8,8 @@ import { CaseService } from 'src/app/services/case.service';
 })
 export class CaseDetailComponent implements OnInit {
 
-  caseDetail : CaseDetail | undefined;
+  caseDetail : CaseDetail | null =null;
+  errorMessage: string | null = null;
 
   // caseDetail: CaseNew = {
   //   caseId: 1,
@@ -32,9 +33,13 @@ export class CaseDetailComponent implements OnInit {
     this.caseService.getCaseById(caseId).subscribe(
       (data: CaseDetail) => {
         this.caseDetail = data;
+        this.errorMessage = null;
       },
       (error: any) => {
-        // Check if the error is an HTTP error
+        this.errorMessage = error.message;
+        this.caseDetail = null;
+        console.error(this)
+/*         // Check if the error is an HTTP error
         if(error.status === 400){  //handle 400 Bad Request
           console.error('Bad Request: Invalid input or parameters',error);
           alert('Invalid case ID or request parameters. Please check your input.');
@@ -48,8 +53,8 @@ export class CaseDetailComponent implements OnInit {
         }
         else{ // Handle other errors 
           console.error('An unexpected error occured.',error)
-        }
-        // console.error('Error retrieving case detail', error);
+        } */
+
       }
     );
   }

@@ -5,3 +5,9 @@ table th {
     padding: 10px; /* Optional: Add padding for better readability */
     text-align: left; /* Optional: Align text to the left */
   }
+  .error-message {
+    color: red;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
