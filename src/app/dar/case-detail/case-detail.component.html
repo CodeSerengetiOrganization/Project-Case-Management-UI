@@ -1,3 +1,6 @@
+<div *ngIf="errorMessage" class="error-message">
+  <p>{{ errorMessage }}</p>
+</div>
 <div class="container" *ngIf="caseDetail; else loading">
   <!-- <pre>{{ caseDetail | json }}</pre>-->
     <h2>Case Details</h2>
@@ -29,5 +32,5 @@
     </table>
   </div>
 <ng-template #loading>
-  <p>Loading case details...</p>
+  <p *ngIf ="!errorMessage">Loading case details...</p>
 </ng-template>
