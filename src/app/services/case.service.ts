@@ -20,18 +20,23 @@ export class CaseService {
     );
   }
 
-  private handleError(workflow: string, caseId: number, error: any){
+  private handleError(workflow: string, caseId: number, errorResponse: any){
     let errorMessage = `Error retrieve ${workflow} case details for case ID: ${caseId}.`;
-    if (error.status === 400) {
+    if (errorResponse.status === 400) {
       errorMessage += 'Bad Request: Invalid input or parameters';      
-    } else if (error.status === 404) {
+    } else if (errorResponse.status === 404) {
       errorMessage += 'Not Found: The requested case does not exist, case id:'+caseId;
-    } else if (error.status === 500) {
+    } else if (errorResponse.status === 500) {
       errorMessage += 'Internal Server Error: something wrong with the server';
     }else{
       errorMessage += 'An unexpected error occured.';
     }
-    console.error(errorMessage,error);
+
+    if(errorResponse.error && errorResponse.error.message){
+      // errorMessage += ' '+error.error.message;
+      errorMessage +=` Details: ${errorResponse.error.message}`;
+    }
+    // console.error(errorMessage,error);
     return throwError(() => new Error(errorMessage));
   }
 
