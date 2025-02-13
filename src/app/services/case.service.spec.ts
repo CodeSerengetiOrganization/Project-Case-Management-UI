@@ -75,7 +75,6 @@ describe('CaseService', () => {
         },
         error : (error) =>{
           const errorStr : string = JSON.stringify(error,null,2);
-          // console.log('from spec unit test:'+errorStr);
           //4.assert the result
           expect(error.status).toBe(400);
           expect(errorStr).toContain('INVALID_CASE_ID');
@@ -102,7 +101,6 @@ describe('CaseService', () => {
         error: (errorResponse) =>{
           expect(errorResponse).toEqual(errorResponse);
           expect(errorResponse.status).toEqual(400);
-          // console.log('from HTTP 400 error handling unit test:'+JSON.stringify(errorResponse));
           expect(errorResponse.message).toContain('Bad Request: Invalid input or parameters');
           
         }        
@@ -126,7 +124,6 @@ describe('CaseService', () => {
         },
         error: (errorResponse) => {
           //3. assert result: HTTP status, expected error message,
-          // console.log('from unit test, handling http 400 error, errorResponse:'+JSON.stringify(errorResponse));
           expect(errorResponse.status).toBe(404);
           expect(errorResponse.message).toContain('Not Found: The requested case does not exist, case id:'+nonExistingCaseId);
         }
@@ -150,8 +147,6 @@ describe('CaseService', () => {
         },
         error: (errorResponse) => {
           //3. assert the result
-          // expect(errorResponse).toEqual(mockedErrorResponse);
-          // console.log('from unit test, handling http 500 error, errorResponse:'+JSON.stringify(errorResponse));
           expect(errorResponse.status).toBe(500);
           expect(errorResponse.message).toContain('Internal Server Error: something wrong with the server');
           // expect(errorResponse.error.statusText).toEqual('Mocked Internal Server Error');
