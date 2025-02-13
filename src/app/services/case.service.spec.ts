@@ -1,25 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CaseService } from './case.service';
-import { HttpClient } from '@angular/common/http';
-import { of, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
 
 describe('CaseService', () => {  
   let caseService: CaseService;
-  let httpClientSpy: jasmine.SpyObj<HttpClient>;
+  // let httpClientSpy: jasmine.SpyObj<HttpClient>;
+  let httpMock: HttpTestingController
   // set up: create a mocked instance of the HttpClient
-  httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+  // httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+  const mockedApiUrl =  'http://localhost:8080/api/cases/v3';
 
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [CaseService,{
-        provide: HttpClient,
-        useValue: httpClientSpy
-      }]
+      imports: [HttpClientTestingModule],
+      providers: [CaseService]
+      // providers: [CaseService,{
+      //   provide: HttpClient,
+      //   useValue: httpClientSpy
+      // }]
     });
     caseService = TestBed.inject(CaseService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
   it('should be created', () => {
@@ -40,79 +43,124 @@ describe('CaseService', () => {
         note: "This is a mocked case by unit test code."
       }
     };
-    //simulate mocked behaviour: return the mocked case when the service is called
-    httpClientSpy.get.and.returnValue(of(mockedCaseDetail));
-    //call the service and validate the result
+    //2. invoke service to make the http call, assert the result
     const caseId=1;
-    caseService.getCaseById(caseId).subscribe(retrunedCaseDtail =>{
-      expect(retrunedCaseDtail).toEqual(mockedCaseDetail);
+    caseService.getCaseById(caseId).subscribe(returnedCaseDetail =>{
+      expect(returnedCaseDetail).toEqual(mockedCaseDetail);
     });
-/*     //validate that the service was called once
-    expect(httpClientSpy.get.calls.count()).toBe(1); */
-    //validate that the service was called with the correct URL
-    expect(httpClientSpy.get).toHaveBeenCalledWith(`${environment.apiUrl}/${caseId}`);
+
+    const req: TestRequest = httpMock.expectOne(`${mockedApiUrl}/${caseId}`);
+    expect(req.request.method).toBe('GET');
+    //3. response with mocked data
+    req.flush(mockedCaseDetail);
+
   });
 
   describe("Errror Handlling", () => {
+    it('should handle INVALID_CASE_ID error',() =>{
+      //1. define mocked error response
+      const errorResponse = { 
+        status: 400, 
+        error: {
+          errorCode: 'INVALID_CASE_ID',
+          message: 'mocked message will not be used'
+        }
+      };
+      //2. mark the behaviour of the HTTP call
+      const invalidCaseId = -1;
+      //3. make the HTTP call
+      caseService.getCaseById(invalidCaseId).subscribe({
+        next : () =>{
+          fail('Expect an error, but got a successful response.')
+        },
+        error : (error) =>{
+          const errorStr : string = JSON.stringify(error,null,2);
+          // console.log('from spec unit test:'+errorStr);
+          //4.assert the result
+          expect(error.status).toBe(400);
+          expect(errorStr).toContain('INVALID_CASE_ID');
+          expect(errorStr).toContain('Invalid case ID provided. Please enter a valid number.');
+        }
+      });      
+
+      //5. Simulate the HTTP response with an error
+      const req = httpMock.expectOne(`${mockedApiUrl}/${invalidCaseId}`);
+
+      req.flush(errorResponse,{status:400,statusText:'Bad Request'});
+  });
     it('should handle http 400 Bad Request error',() =>{
-        //define mocked error response
-        const errorResponse = { 
-          status: 400, 
-          statusText: 'Bad Request',
-          error: {message: 'Mocked Bad Request'} };
-        //simulate the error response
-        // httpClientSpy.get.and.throwError(new Error(JSON.stringify(errorResponse)));  //this line is not working as expected as it does not contain status and statusText
-        httpClientSpy.get.and.returnValue(throwError(() =>errorResponse));
-        //call the service and validate the error handling
-        caseService.getCaseById(1).subscribe({
-          next: ()=> fail('expected an error, not a case detail'),
-          error: (error) => {
-            console.error(error);
-            expect(error.message).toContain('Mocked Bad Request');
-            // expect(error.status).toBe(400);  // this is not need as front end does not have access to status code
-          }
-        });
-
-    });
-
-    it('should handle http 404 Not Found error',()=>{
-      //1. define the error response
+      //1.define mocked error response
       const errorResponse = {
-        status : 404,
-        statusText : 'NOT FOUND',
-        error: {message : 'mocked NOT FOUND error'}
+        satus:400,
+        error:'This is a mocked 400 http error response with no data structure'
       };
-      //2. mock bahaviour
-      httpClientSpy.get.and.returnValue(throwError(()=>errorResponse));
-      //3. call the service and handle error
+      //2. make the api call and assert the results
       caseService.getCaseById(1).subscribe({
-        next: () => fail('fail'),
-        error:(errorBody) =>{
-          expect(errorBody.message).toContain('mocked NOT FOUND error');
-        }
-      }
-
-      );
+        next: () => {
+          fail('Expect HTTP 400 error, but got a successful response');
+        },
+        error: (errorResponse) =>{
+          expect(errorResponse).toEqual(errorResponse);
+          expect(errorResponse.status).toEqual(400);
+          // console.log('from HTTP 400 error handling unit test:'+JSON.stringify(errorResponse));
+          expect(errorResponse.message).toContain('Bad Request: Invalid input or parameters');
+          
+        }        
+      });
+      //3. simulate the HTTP respoinse with the mocked error response
+      const req = httpMock.expectOne(`${mockedApiUrl}/1`);
+      req.flush(errorResponse,{status:400,statusText:'Mocked Bad Request'});
+      // );
     });
-
-    it('should handle http 4500 Not Found error',()=>{
-      //1. define the error response
+    it('should handle 404 Not Found error', () =>{
+      //1. mark the error response
       const errorResponse = {
-        status : 500,
-        statusText : 'INTERNAL SERVER ERROR',
-        error: {message : 'mocked INTERNAL SERVER ERROR error'}
+        status: 404,
+        error:"Mocked 404 error message, will be replaced by caseService"
       };
-      //2. mock bahaviour
-      httpClientSpy.get.and.returnValue(throwError(()=>errorResponse));
-      //3. call the service and handle error
-      caseService.getCaseById(1).subscribe({
-        next: () => fail('fail'),
-        error:(errorBody) =>{
-          expect(errorBody.message).toContain('mocked INTERNAL SERVER ERROR error');
+      //2. make the api call
+      const nonExistingCaseId = 999;
+       caseService.getCaseById(nonExistingCaseId).subscribe({
+        next: () => {
+          fail('Expect 404 error but successfully go through');
+        },
+        error: (errorResponse) => {
+          //3. assert result: HTTP status, expected error message,
+          // console.log('from unit test, handling http 400 error, errorResponse:'+JSON.stringify(errorResponse));
+          expect(errorResponse.status).toBe(404);
+          expect(errorResponse.message).toContain('Not Found: The requested case does not exist, case id:'+nonExistingCaseId);
         }
+      }); 
+      
+      //4. simulate the HTTP response with mocked error response;
+      const req = httpMock.expectOne(`${mockedApiUrl}/${nonExistingCaseId}`);
+      req.flush(errorResponse,{status:404,statusText:'Mocked 404 error'});
+    });
+    it('should handle http 500 error',() =>{
+      //1. mocke the error response;
+      const mockedErrorResponse = {
+        status:500,
+        error:'Mocked http 500 error message, will be replaced by caseService'
       }
-
-      );
+      //2. make the API call
+      const internalServerErrorCaseId = 500;
+      caseService.getCaseById(internalServerErrorCaseId).subscribe({
+        next: ()=>{
+          fail('Excpect HTTp 500 error but successfully go through');
+        },
+        error: (errorResponse) => {
+          //3. assert the result
+          // expect(errorResponse).toEqual(mockedErrorResponse);
+          // console.log('from unit test, handling http 500 error, errorResponse:'+JSON.stringify(errorResponse));
+          expect(errorResponse.status).toBe(500);
+          expect(errorResponse.message).toContain('Internal Server Error: something wrong with the server');
+          // expect(errorResponse.error.statusText).toEqual('Mocked Internal Server Error');
+        }
+      });
+      //4. simluate the http response 
+      
+      const req = httpMock.expectOne(`${mockedApiUrl}/${internalServerErrorCaseId}`);
+      req.flush(mockedErrorResponse,{status: 500, statusText:'Mocked Internal Server Error'});
     });
 
   });
