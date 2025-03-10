@@ -1,0 +1,45 @@
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 0px; /* Add gap between list items */
+}
+
+header nav ul li {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0px; /* Remove default padding */
+}
+
+header nav ul li a {
+    text-decoration: none; /* Remove underline */
+    padding: 10px 15px;
+    background-color: #f0f0f0; /* Example button background */
+    border-radius: 5px;
+    color: #333;
+}
+
+// header nav ul li a:hover {
+//     background-color: #e0e0e0;
+// }
+
+.menu-button {
+    background: none; /* Removes default background */
+    border: none; /* Removes default border */
+    padding: 10px 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.menu-button:hover{
+    background-color: #f0f0f0;
+    color: #007bff; /* Change text color on hover */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+    text-decoration: underline;
+}
+.header-content{
+    display: flex;
+    align-items:center;
+}

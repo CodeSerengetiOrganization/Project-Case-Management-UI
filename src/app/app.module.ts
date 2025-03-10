@@ -5,11 +5,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CaseDetailComponent } from './dar/case-detail/case-detail.component';
 import { HttpClientModule } from '@angular/common/http';
+import { HeaderComponent } from './shared/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CaseDetailComponent
+    CaseDetailComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

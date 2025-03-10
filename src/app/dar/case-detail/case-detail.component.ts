@@ -25,7 +25,7 @@ export class CaseDetailComponent implements OnInit {
 
   ngOnInit(): void {
     //will add code to retrieve case detail from API;
-    this.getCaseDetail(2);
+    this.getCaseDetail(3);
   }
 
   getCaseDetail(caseId: number): void {
