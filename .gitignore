@@ -40,3 +40,12 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Maven build artifacts
+target/
+*.war
+*.ear
+*.jar
+
+#This is a folder created by frontend-maven-plugin during the mvn clean install process.
+node/
