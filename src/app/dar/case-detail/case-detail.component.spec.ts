@@ -5,6 +5,7 @@ import { CaseService } from 'src/app/services/case.service';
 import { CaseDetailComponent } from './case-detail.component';
 import { environment } from 'src/environments/environment';
 
+
 describe('CaseDetailComponent', () => {
   let component: CaseDetailComponent;
   let fixture: ComponentFixture<CaseDetailComponent>;
@@ -73,7 +74,6 @@ describe('CaseDetailComponent', () => {
       expect(window.alert).toHaveBeenCalledWith('The case you are looking for does not exist. Please verify the case ID.');
     });
   });
-
 
     
 });

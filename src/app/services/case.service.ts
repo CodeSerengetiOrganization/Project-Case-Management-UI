@@ -20,7 +20,7 @@ export class CaseService {
     return this.http.get<CaseDetail>(`${this.apiUrl}/${caseId}`).pipe(
       catchError((error) => this.handleError("worflowA",caseId,error))
     );
-  }
+  };
 
   private handleError(workflow: string, caseId: number, errorResponse: any){
     
