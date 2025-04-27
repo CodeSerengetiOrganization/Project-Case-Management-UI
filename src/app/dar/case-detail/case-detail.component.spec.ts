@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CaseService } from 'src/app/services/case.service';
 import { CaseDetailComponent } from './case-detail.component';
 import { environment } from 'src/environments/environment';
-import { By } from '@angular/platform-browser';
+
 
 describe('CaseDetailComponent', () => {
   let component: CaseDetailComponent;
@@ -75,15 +75,5 @@ describe('CaseDetailComponent', () => {
     });
   });
 
-
-  // describe('Routing related test',()=>{
-  //   //test the home button
-  //   it('should negative to DummyComponent when click Home buttion',()=>{
-  //     //1. get the Home button;
-  //     fixture.debugElement.queryAll(By.css('button'))
-  //     //2. make the action to click it;
-  //     //3. assert the result
-  //   });
-  // });
     
 });

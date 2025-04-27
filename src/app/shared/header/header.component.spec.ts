@@ -1,7 +1,5 @@
 import { ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
-// import { By } from '@angular/platform-browser';
-// import { cssContainingText } from '@angular/platform-browser/testing';
 import { RouterTestingModule } from '@angular/router/testing'; // Helps test routing
 import { Router } from '@angular/router';
 import { Location } from '@angular/common'; // Lets us check current URL path
@@ -13,8 +11,6 @@ describe('HeaderComponent', () => {
   let router: Router;
   let location: Location;
 
-
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports:[RouterTestingModule.withRoutes([
@@ -25,15 +21,6 @@ describe('HeaderComponent', () => {
       declarations: [ HeaderComponent ] // we should not need it as we are using Angular14 after version.
     })
     .compileComponents();
-  // beforeEach(async () => {
-  //   await TestBed.configureTestingModule({
-  //     declarations: [HeaderComponent],
-  //     imports: [RouterTestingModule.withRoutes([
-  //       { path: 'home', component: DummyComponent },
-  //       { path: 'casemanagement', component: DummyComponent },
-  //       { path: 'workflow', component: DummyComponent }
-  //     ])]
-  //   }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
@@ -69,31 +56,11 @@ describe('HeaderComponent', () => {
   });
 
   
-  describe('Routing related test',()=>{
-    //Initialize the component
-    // let fixture : ComponentFixture<HeaderComponent>; 
-    // let  router = TestBed.inject(Router); // Get a router instance
-    // let location = TestBed.inject(Location); // Get current URL path
-    // fixture = TestBed.createComponent(HeaderComponent); // Create the header
-    // component = fixture.componentInstance;
-    // router.initialNavigation(); // Start Angular routing
-    // fixture.detectChanges(); // Render the compon
-
-
-  
-      // router = TestBed.inject(Router);
-      // location = TestBed.inject(Location);
-      // fixture = TestBed.createComponent(HeaderComponent);
-      // component = fixture.componentInstance;
-      // router.initialNavigation();
-      // fixture.detectChanges();
-    // });
+  describe('Menu Buttons Routing Related Test',()=>{
 
     //test the home button
     it('should negative to /home parth when click Home buttion',fakeAsync(()=>{
       //1. get the Home button;
-      // fixture.debugElement.query(By.cssContainingText('button', 'Home'));
-      // const routerSpyOn = spyOn(router,'navigate');
       const buttons = fixture.debugElement.queryAll(By.css('button.menu-button'));
       const homeButton = buttons.find(
         btn =>{
@@ -105,17 +72,12 @@ describe('HeaderComponent', () => {
       tick();
       //3. assert the result
       expect(location.path()).toBe('/home');
-      // expect(routerSpyOn).toHaveBeenCalledWith(['/home']);
-      // expect(router.navigate).toHaveBeenCalledWith(['/home']);
     }));
+
     it('should nevigate to /casemanagement path when click CaseManagement button',fakeAsync(()=>{
       //1. get the button
       const allButtons = fixture.debugElement.queryAll(By.css('button.menu-button'));
       const cmButton =  allButtons.find(
-        // btn =>{
-        //   return btn.nativeElement.textContent.trim() === 'CaseManage';
-        //   // return btn.context === 'CaseManage';
-        // }
         btn => btn.nativeElement.textContent.trim() === 'CaseManage'
       );
       expect(cmButton).toBeTruthy();
@@ -124,23 +86,23 @@ describe('HeaderComponent', () => {
       tick();
       //3.assert the path
       expect(location.path()).toBe('/casemanagement')
-
     }));
 
+    it('should nevigate to /workflow when click Workflow button',fakeAsync(()=>{
+      //1. locate the button
+      const allButtons = fixture.debugElement.queryAll(By.css('button.menu-button'));
+      const workflowBtn = allButtons.find(
+        btn => btn.nativeElement.textContent.trim() === 'WorkFlow'
+      );
+      //2. simulate to trigge the button
+      workflowBtn?.nativeElement.click();
+      //3. wait and assert the path
+      tick();
+      expect(location.path()).toBe('/workflow');
+    }));
   });
 
-  it('should nevigate to workflow when click Workflow button',fakeAsync(()=>{
-    //1. locate the button
-    const allButtons = fixture.debugElement.queryAll(By.css('button.menu-button'));
-    const workflowBtn = allButtons.find(
-      btn => btn.nativeElement.textContent.trim() === 'WorkFlow'
-    );
-    //2. simulate to trigge the button
-    workflowBtn?.nativeElement.click();
-    //3. wait and assert the path
-    tick();
-    expect(location.path()).toBe('/workflow');
-  }));
+
 
 });
 
